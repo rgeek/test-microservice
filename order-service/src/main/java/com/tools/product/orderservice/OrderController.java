@@ -1,15 +1,23 @@
 package com.tools.product.orderservice;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     @PostMapping
-    public OrderResponse placeOrder(@RequestBody OrderRequest request) {
-        // Simple mock placement response
-        return new OrderResponse("ORD-99972", request.getProductId(), "PENDING");
+    public CustomerOrder placeOrder(@RequestBody OrderRequest request) {
+        // Generate a random real order ID
+        String dynamicOrderId = "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        CustomerOrder newOrder=orderRepository.save(new CustomerOrder(dynamicOrderId,request.getProductId(),"CONFIRMED"));
+        return newOrder;
     }
 }
 
